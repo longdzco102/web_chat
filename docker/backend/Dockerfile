@@ -7,7 +7,7 @@ FROM node:20-alpine AS deps
 WORKDIR /app
 
 # Copy package files
-COPY backend/package*.json ./
+COPY app/backend/package*.json ./
 
 # Install dependencies
 RUN npm ci --only=production && \
@@ -17,9 +17,9 @@ RUN npm ci --only=production && \
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-COPY backend/package*.json ./
+COPY app/backend/package*.json ./
 RUN npm ci
-COPY backend/ ./
+COPY app/backend/ ./
 
 # Stage 3: Production
 FROM node:20-alpine AS runner

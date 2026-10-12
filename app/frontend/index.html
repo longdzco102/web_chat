@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tiên Giới Hội – Tu Tiên Chat &amp; Blog</title>
+  <meta name="description" content="Nền tảng giao lưu tu luyện, chia sẻ bí kíp và kết nối đồng đạo trên con đường tu tiên." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- CSS entry point -->
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+
+<div id="app" class="app-root">
+
+  <!-- ═══ COL 1: SIDEBAR (72px) ═══ -->
+  <aside id="sidebar" class="sidebar" aria-label="Tông Phái Sidebar">
+
+    <div class="sidebar-logo" id="btn-home" title="Trang Chủ" role="button" tabindex="0" aria-label="Về trang chủ">
+      <span class="logo-symbol">☯</span>
+      <div class="logo-tooltip">Tiên Giới Hội</div>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <!-- Sect icons – filled by SidebarView.js -->
+    <div id="sect-list" class="sect-list hidden"></div>
+
+    <div id="btn-create-sect" class="sidebar-action-btn" title="Khai Tông Lập Phái" role="button" tabindex="0">
+      <span class="action-icon">+</span>
+      <div class="sidebar-tooltip">Khai Tông Lập Phái</div>
+    </div>
+
+    <div class="sidebar-action-btn sidebar-explore-btn" title="Thám Hiểm Tiên Giới" role="button" tabindex="0">
+      <span class="action-icon">🧭</span>
+      <div class="sidebar-tooltip">Thám Hiểm Tiên Giới</div>
+    </div>
+
+  </aside>
+
+  <!-- ═══ COL 2: CHANNEL PANEL (240px) ═══ -->
+  <nav id="channel-panel" class="channel-panel" aria-label="Danh sách kênh">
+
+    <div class="channel-panel-header">
+      <span id="channel-panel-title" class="channel-panel-title">Trang Chủ</span>
+      <button class="header-chevron" aria-label="Menu">▾</button>
+    </div>
+
+    <div id="channel-list" class="channel-list">
+
+      <!-- Guest / homepage channels -->
+      <div id="guest-channels" class="channel-group">
+        <div class="channel-group-label"><span class="caret">▾</span> TIÊN GIỚI MỤC LỤC</div>
+        <div class="channel-item active" data-view="blog" role="button" tabindex="0">
+          <span class="channel-icon">📜</span><span>Bảng Cáo Thị</span>
+        </div>
+      </div>
+
+      <!-- DM Conversations -->
+      <div id="dm-conversations" class="channel-group hidden">
+        <div class="channel-group-label"><span class="caret">▾</span> ĐỒNG ĐẠO TRUYỀN TIN</div>
+        <div id="dm-list-dynamic"></div>
+      </div>
+
+      <!-- Sect channels (filled dynamically by AppController after login) -->
+      <div id="sect-channels-wrap" class="channel-group hidden">
+        <!-- Toolbar: only visible to sect owner/elder -->
+        <div class="sect-toolbar">
+          <button id="btn-edit-sect"     class="sect-toolbar-btn" title="Chỉnh sửa Tông Môn" style="display:none">✏️ Sửa</button>
+          <button id="btn-invite-member" class="sect-toolbar-btn" title="Mời thành viên">✉️ Mời</button>
+        </div>
+        <!-- Injected by AppController._renderChannelList() -->
+        <div id="sect-channels-dynamic"></div>
+        <!-- Channel management bar (shown to truong_lao+) -->
+        <div id="channel-mgmt-bar" class="channel-mgmt-bar hidden">
+          <button id="btn-add-channel" class="channel-add-btn" title="Tạo kênh mới">+ Tạo Kênh</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Profile Card pinned to bottom -->
+    <div id="user-profile-card" class="user-profile-card">
+      <!-- Guest -->
+      <div id="guest-profile" class="guest-profile-section">
+        <div class="guest-avatar">?</div>
+        <div class="guest-info">
+          <p class="guest-name">Khách Vãng Lai</p>
+          <p class="guest-hint">Đăng nhập để tu luyện</p>
+        </div>
+        <button id="btn-login" class="btn-login-small" aria-label="Đăng nhập">→</button>
+      </div>
+      <!-- Logged-in (hidden by default) -->
+      <div id="user-profile" class="user-profile-section hidden">
+        <div class="user-avatar-wrap">
+          <img id="profile-avatar" src="" alt="Avatar" class="user-avatar" />
+          <div class="status-dot online"></div>
+        </div>
+        <div class="user-info">
+          <p class="user-name"  id="profile-name">Vô Danh</p>
+          <p class="user-realm" id="profile-realm">Luyện Khí Kỳ</p>
+          <div class="exp-bar-wrap">
+            <div class="exp-bar-fill" id="exp-bar" style="width:0%"></div>
+          </div>
+          <p class="exp-label" id="exp-label">0 / 10,000 Linh Khí</p>
+        </div>
+        <div class="profile-actions">
+          <button class="profile-icon-btn" id="btn-settings" title="Cài đặt (Đột Phá, Avatar)">⚙</button>
+          <button class="profile-icon-btn" id="btn-logout" title="Đăng xuất">↪</button>
+        </div>
+      </div>
+    </div>
+
+  </nav>
+
+  <!-- ═══ COL 3: MAIN CONTENT ═══ -->
+  <main id="main-content" class="main-content" aria-label="Nội dung chính">
+
+    <header class="main-topbar">
+      <div class="topbar-left">
+        <span class="topbar-breadcrumb" id="breadcrumb">Trang Chủ</span>
+        <span class="topbar-sep">／</span>
+        <span class="topbar-page" id="breadcrumb-page">Bảng Cáo Thị</span>
+      </div>
+      <div class="topbar-right">
+        <button class="topbar-btn hidden" id="btn-voice-call" title="Đàm Đạo Linh Âm">📞</button>
+        <button class="topbar-btn" id="btn-search"         aria-label="Tìm kiếm">🔍</button>
+        <button class="topbar-btn" id="btn-members-toggle" aria-label="Thành viên">👥</button>
+        <button class="topbar-btn" id="btn-notifications"  aria-label="Thông báo">🔔</button>
+        <button class="topbar-btn" id="btn-open-login"     aria-label="Tài khoản">⚔</button>
+      </div>
+    </header>
+
+    <!-- ── VIEW: BLOG ── -->
+    <section id="view-blog" class="view view-blog active">
+      <div class="blog-hero">
+        <div class="hero-particles" id="hero-particles"></div>
+        <div class="hero-content">
+          <div class="hero-badge">✦ Tiên Giới Hội ✦</div>
+          <h1 class="hero-title">Bảng Cáo Thị</h1>
+          <p class="hero-subtitle">Nơi hội tụ anh hùng thiên hạ – Chia sẻ bí kíp, kết giao đồng đạo</p>
+          <div class="hero-actions">
+            <button class="hero-btn primary"   id="btn-hero-join">Nhập Môn Tu Luyện</button>
+            <button class="hero-btn secondary" id="btn-hero-explore">Khám Phá Tiên Giới</button>
+            <button class="hero-btn secondary" id="btn-hero-create-post">✍️ Đăng Bài</button>
+          </div>
+        </div>
+        <div class="hero-orb hero-orb-1"></div>
+        <div class="hero-orb hero-orb-2"></div>
+        <div class="hero-orb hero-orb-3"></div>
+      </div>
+      <div class="blog-filter-bar">
+        <button class="filter-btn active" data-filter="all">Tất Cả</button>
+        <button class="filter-btn" data-filter="tu-luyen">Tu Luyện</button>
+        <button class="filter-btn" data-filter="chien-dau">Chiến Đấu</button>
+        <button class="filter-btn" data-filter="bao-vat">Bảo Vật</button>
+        <button class="filter-btn" data-filter="tong-mon">Tông Môn</button>
+        <button class="filter-btn" data-filter="truy-tim">Truy Tầm Boss</button>
+      </div>
+      <div class="blog-grid" id="blog-grid"></div>
+    </section>
+
+    <!-- ── VIEW: CHAT ── -->
+    <section id="view-chat" class="view view-chat">
+      <div class="chat-messages" id="chat-messages" role="log" aria-live="polite"></div>
+      <div class="typing-indicator hidden" id="typing-indicator">
+        <div class="typing-dots"><span></span><span></span><span></span></div>
+        <span id="typing-text">Đệ tử đang nhập...</span>
+      </div>
+      <div class="chat-input-bar">
+        <div class="input-actions-left">
+          <button class="input-action-btn" id="btn-attach"   title="Đính kèm" aria-label="Đính kèm">📎</button>
+          <input type="file" id="file-input" style="display:none" />
+          <button class="input-action-btn" id="btn-voice"    title="Ghi âm truyền âm" aria-label="Ghi âm">🎤</button>
+          <button class="input-action-btn" id="btn-sticker"  title="Pháp Bảo Sticker" aria-label="Sticker">🎴</button>
+        </div>
+        <div class="chat-input-wrap">
+          <textarea id="message-input" class="message-input" rows="1"
+            placeholder="Nhập linh văn gửi đến kênh..." aria-label="Nhập tin nhắn"></textarea>
+          <div id="recording-indicator" class="recording-indicator hidden">
+            <span class="recording-pulse">🔴</span>
+            <span id="recording-time">00:00</span>
+            <button id="btn-stop-record" class="btn-record-action stop" title="Dừng và Gửi">Gửi</button>
+            <button id="btn-cancel-record" class="btn-record-action cancel" title="Hủy">Hủy</button>
+          </div>
+        </div>
+        <div class="input-actions-right">
+          <button class="input-action-btn send-btn" id="btn-send" title="Gửi" aria-label="Gửi">
+            <span class="send-icon">➤</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VIEW: VOICE ── -->
+    <section id="view-voice" class="view view-voice">
+      <!-- 1. Wait/Placeholder State -->
+      <div class="voice-placeholder" id="voice-placeholder">
+        <div class="voice-icon">🔊</div>
+        <h2>Linh Âm Đại Điện</h2>
+        <p id="voice-placeholder-desc">Hãy gia nhập trận pháp thoại để bắt đầu truyền âm</p>
+        <button class="voice-join-btn" id="voice-btn-join">Khởi Kích Trận Pháp ⚡</button>
+      </div>
+
+      <!-- 2. Active Session State (Lotus Grid & Controls) -->
+      <div class="voice-active-room hidden" id="voice-active-room">
+        <!-- Room Info Header -->
+        <div class="voice-room-header">
+          <div class="voice-room-info">
+            <h2 id="voice-active-title">🔊 Linh Âm Đại Điện</h2>
+          </div>
+          <div class="voice-room-status-badge">Trận Pháp Hoạt Động</div>
+        </div>
+
+        <!-- Participants Lotus Seat Grid -->
+        <div class="voice-grid" id="voice-participant-grid">
+          <!-- Injected dynamically by VoiceView.js -->
+        </div>
+
+        <!-- Call controls -->
+        <div class="voice-controls-bar">
+          <button class="voice-ctrl-btn mute-btn" id="voice-btn-mute" title="Bế Quan Tĩnh Âm (Mute)">🎙️</button>
+          <button class="voice-ctrl-btn leave-btn" id="voice-btn-leave" title="Thoát Ly Trận Pháp (Leave)">🚪</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══ COL 4: MEMBER PANEL (240px) ═══ -->
+  <aside id="member-panel" class="member-panel" aria-label="Danh sách thành viên">
+    <div class="member-search-wrap">
+      <input type="search" class="member-search" placeholder="Tìm đệ tử..." aria-label="Tìm thành viên" />
+    </div>
+    <div class="member-list" id="member-list" role="list"></div>
+  </aside>
+
+</div><!-- #app -->
+
+<!-- ═══ MODALS ═══ -->
+
+<!-- Auth Modal -->
+<div id="modal-auth" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Đăng nhập">
+  <div class="modal-box">
+    <button class="modal-close" id="close-auth-modal" aria-label="Đóng">✕</button>
+    <div class="auth-header">
+      <span class="auth-logo">☯</span>
+      <h2 class="auth-title">Nhập Môn Tu Tiên</h2>
+      <p class="auth-subtitle">Bước lên con đường bất tử</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login">Đăng Nhập</button>
+      <button class="auth-tab"        id="tab-register">Đăng Ký</button>
+    </div>
+    <form id="form-login" class="auth-form">
+      <div class="form-group">
+        <label for="login-email">Đạo Hiệu (Email)</label>
+        <input type="email" id="login-email" placeholder="dao_hieu@tiengioi.vn" autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label for="login-password">Mật Chú (Mật Khẩu)</label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <button type="submit" class="btn-auth-submit">Nhập Cổng Tu Tiên ⚡</button>
+      <p class="auth-alt-link">Chưa có tài khoản? <a href="#" id="switch-to-register">Đăng ký ngay</a></p>
+    </form>
+    <form id="form-register" class="auth-form hidden">
+      <div class="form-group">
+        <label for="reg-name">Đạo Danh</label>
+        <input type="text" id="reg-name" placeholder="Thiên Kiêu Vô Song" autocomplete="name" />
+      </div>
+      <div class="form-group">
+        <label for="reg-email">Email</label>
+        <input type="email" id="reg-email" placeholder="dao_hieu@tiengioi.vn" autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label for="reg-password">Mật Chú</label>
+        <input type="password" id="reg-password" placeholder="••••••••" autocomplete="new-password" />
+      </div>
+      <button type="submit" class="btn-auth-submit">Khai Mở Tu Tiên Chi Lộ ✨</button>
+      <p class="auth-alt-link">Đã có tài khoản? <a href="#" id="switch-to-login">Đăng nhập</a></p>
+    </form>
+  </div>
+</div>
+
+<!-- Create Sect Modal -->
+<div id="modal-create-sect" class="modal-overlay hidden" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <button class="modal-close" id="close-create-sect" aria-label="Đóng">✕</button>
+    <div class="auth-header">
+      <span class="auth-logo">⚔</span>
+      <h2 class="auth-title">Khai Tông Lập Phái</h2>
+      <p class="auth-subtitle">Xây dựng tông môn của bạn</p>
+    </div>
+    <form id="form-create-sect" class="auth-form">
+      <div class="form-group">
+        <label for="sect-name">Tên Tông Môn</label>
+        <input type="text" id="sect-name" placeholder="Thiên Long Giáo..." />
+      </div>
+      <div class="form-group">
+        <label for="sect-desc">Tông Chỉ</label>
+        <textarea id="sect-desc" rows="2" placeholder="Tông môn chuyên tu luyện..."></textarea>
+      </div>
+      <div class="sect-icon-picker">
+        <p>Chọn Linh Huy:</p>
+        <div class="sect-icons">
+          <span class="sect-icon-opt selected" data-icon="🐉">🐉</span>
+          <span class="sect-icon-opt" data-icon="⚔">⚔</span>
+          <span class="sect-icon-opt" data-icon="🌊">🌊</span>
+          <span class="sect-icon-opt" data-icon="🔥">🔥</span>
+          <span class="sect-icon-opt" data-icon="🌙">🌙</span>
+          <span class="sect-icon-opt" data-icon="⚡">⚡</span>
+          <span class="sect-icon-opt" data-icon="🌸">🌸</span>
+          <span class="sect-icon-opt" data-icon="☯">☯</span>
+        </div>
+      </div>
+      <button type="submit" class="btn-auth-submit">Lập Tông Thành Công 🎉</button>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Sect Modal (owner only) -->
+<div id="modal-edit-sect" class="modal-overlay hidden" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <button class="modal-close" id="close-edit-sect" aria-label="Đóng">✕</button>
+    <div class="auth-header">
+      <span class="auth-logo">✏️</span>
+      <h2 class="auth-title">Chỉnh Sửa Tông Môn</h2>
+    </div>
+    <form id="form-edit-sect" class="auth-form">
+      <div class="form-group">
+        <label for="edit-sect-name">Tên Tông Môn</label>
+        <input type="text" id="edit-sect-name" placeholder="Tên tông môn..." required />
+      </div>
+      <div class="form-group">
+        <label for="edit-sect-desc">Tông Chỉ</label>
+        <textarea id="edit-sect-desc" rows="3" placeholder="Mô tả tông môn..."></textarea>
+      </div>
+      <button type="submit" class="btn-auth-submit">Lưu Thay Đổi ✅</button>
+    </form>
+  </div>
+</div>
+
+<!-- Invite Member Modal (owner only) -->
+<div id="modal-invite" class="modal-overlay hidden" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <button class="modal-close" id="close-invite" aria-label="Đóng">✕</button>
+    <div class="auth-header">
+      <span class="auth-logo">✉️</span>
+      <h2 class="auth-title">Mời Đệ Tử Vào Tông Môn</h2>
+      <p class="auth-subtitle">Nhập Đạo Hiệu (Tên) của người bạn muốn mời</p>
+    </div>
+    <form id="form-invite" class="auth-form">
+      <div class="form-group">
+        <label for="invite-name">Đạo Hiệu Đệ Tử</label>
+        <input type="text" id="invite-name" placeholder="ví dụ: nho co ay" required />
+      </div>
+      <button type="submit" class="btn-auth-submit">Gửi Lời Mời ✉️</button>
+    </form>
+  </div>
+</div>
+
+<!-- Search User Modal -->
+<div id="modal-search-user" class="modal-overlay hidden" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <button class="modal-close" id="close-search-user" aria-label="Đóng">✕</button>
+    <div class="auth-header">
+      <span class="auth-logo">🔍</span>
+      <h2 class="auth-title">Tìm Kiếm Đồng Đạo</h2>
+      <p class="auth-subtitle">Nhập Đạo Hiệu hoặc Email để tìm kiếm</p>
+    </div>
+    <div class="auth-form">
+      <div class="form-group">
+        <input type="text" id="search-user-input" placeholder="Nhập tên đồng đạo..." autocomplete="off" style="width: 100%; padding: 10px; background: rgba(0,0,0,.2); border: 1px solid rgba(255,255,255,.1); border-radius: 6px; color: #fff;" />
+      </div>
+      <div id="search-user-results" class="search-results-list" style="margin-top: 15px; max-height: 250px; overflow-y: auto;">
+        <div class="search-empty" style="text-align:center; padding:20px; color:var(--t-muted);">Nhập tên để tìm kiếm đồng đạo...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Notifications Modal -->
+<div id="modal-notifications" class="modal-overlay hidden" role="dialog" aria-modal="true">
+  <div class="modal-box" style="max-width: 450px;">
+    <button class="modal-close" id="close-notifications" aria-label="Đóng">✕</button>
+    <div class="auth-header">
+      <span class="auth-logo">🔔</span>
+      <h2 class="auth-title">Truyền Tin Linh Hồn</h2>
+      <p class="auth-subtitle">Các thông báo, sắc phong liên quan đến tu vi của bạn</p>
+    </div>
+    <div class="auth-form">
+      <div id="notifications-list" class="notif-results-list" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+        <div class="notif-empty" style="text-align:center; padding:20px; color:var(--t-muted);">Không có truyền tin mới...</div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:15px;">
+        <button id="btn-clear-notifications" class="btn-auth-submit" style="flex:1; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); box-shadow:none; color:var(--t-secondary);">Xóa Tất Cả 🧹</button>
+        <button id="close-notifications-btn" class="btn-auth-submit" style="flex:1;">Đóng ✕</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Post Modal -->
+<div id="modal-create-post" class="modal-overlay hidden" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <button class="modal-close" id="close-create-post" aria-label="Đóng">✕</button>
+    <div class="auth-header">
+      <span class="auth-logo">✍️</span>
+      <h2 class="auth-title">Đăng Bài Lên Bảng Cáo Thị</h2>
+      <p class="auth-subtitle">Chia sẻ bí kíp, chiến tích, bảo vật của bạn</p>
+    </div>
+    <form id="form-create-post" class="auth-form">
+      <div class="form-group">
+        <label for="post-title">Tiêu Đề</label>
+        <input type="text" id="post-title" placeholder="Ví dụ: Bí kíp đột phá Kim Đan Kỳ..." required />
+      </div>
+      <div class="form-group">
+        <label for="post-tag">Chủ Đề</label>
+        <select id="post-tag" class="form-select">
+          <option value="tu-luyen">📖 Tu Luyện</option>
+          <option value="chien-dau">⚔️ Chiến Đấu</option>
+          <option value="bao-vat">💎 Bảo Vật</option>
+          <option value="tong-mon">🏯 Tông Môn</option>
+          <option value="truy-tim">🔍 Truy Tầm Boss</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="post-content">Nội Dung</label>
+        <textarea id="post-content" rows="6" placeholder="Viết nội dung bài viết..." required></textarea>
+      </div>
+      <button type="submit" class="btn-auth-submit">Đăng Bài ✨</button>
+    </form>
+  </div>
+</div>
+
+<!-- Post Detail Modal -->
+<div id="modal-post" class="modal-overlay hidden" role="dialog" aria-modal="true">
+  <div class="modal-box modal-post-box">
+    <button class="modal-close" id="close-post-modal" aria-label="Đóng">✕</button>
+    <div id="modal-post-content" class="post-detail-content"></div>
+    <div class="post-comments">
+      <h3 class="comments-title">Bình Luận Đệ Tử</h3>
+      <div id="post-comments-list" class="comments-list"></div>
+      <div class="comment-input-wrap">
+        <textarea id="comment-input" placeholder="Viết bình luận..." rows="2"></textarea>
+        <button id="btn-comment-submit" class="btn-auth-submit" style="margin-top:8px">Gửi Bình Luận</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- User Settings Modal -->
+<div id="modal-settings" class="modal-overlay hidden" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <button class="modal-close" id="close-settings-modal" aria-label="Đóng">✕</button>
+    <div class="auth-header">
+      <span class="auth-logo">⚙</span>
+      <h2 class="auth-title">Thiết Lập Động Phủ</h2>
+    </div>
+    
+    <div class="settings-content">
+      <!-- Cập nhật Avatar -->
+      <div class="settings-section">
+        <h3>Thông Tin Đạo Hữu</h3>
+        <form id="form-settings" class="auth-form" enctype="multipart/form-data">
+          <div class="form-group" style="text-align: center;">
+            <img id="settings-avatar-preview" src="" alt="Avatar" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin:10px auto;display:block;border:2px solid var(--c-gold)" />
+            <input type="file" id="avatar-input" accept="image/*" style="display:none" />
+            <button type="button" class="btn-auth-submit" id="btn-select-avatar" style="width:auto;padding:8px 16px;font-size:12px;margin-bottom:10px;">Thay Đổi Ảnh</button>
+          </div>
+          <div class="form-group">
+            <label for="settings-gender">Giới Tính</label>
+            <select id="settings-gender" class="form-select">
+              <option value="kho_noi">Khó Nói</option>
+              <option value="nam">Nam</option>
+              <option value="nu">Nữ</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-auth-submit" id="btn-save-settings">Lưu Thiết Lập</button>
+        </form>
+      </div>
+
+      <!-- Đột Phá Cảnh Giới -->
+      <div class="settings-section" style="margin-top:20px;border-top:1px solid rgba(255,255,255,.05);padding-top:20px;text-align:center;">
+        <h3>Tu Luyện & Cảnh Giới</h3>
+        <p id="settings-exp-status" style="margin:10px 0;color:var(--t-muted);font-size:14px;"></p>
+        <button class="breakthrough-btn" id="btn-breakthrough" style="padding:10px 20px;font-size:14px;" title="Đột Phá Cảnh Giới">⚡ Đột Phá</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Channel Create/Edit Modal -->
+<div id="modal-channel" class="modal-overlay hidden" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <button class="modal-close" id="close-channel-modal" aria-label="Đóng">✕</button>
+    <div class="auth-header">
+      <span class="auth-logo" id="channel-modal-icon">#</span>
+      <h2 class="auth-title" id="channel-modal-title">Tạo Kênh Mới</h2>
+    </div>
+    <form id="form-channel" class="auth-form">
+      <div class="form-group">
+        <label for="channel-name">Tên Kênh</label>
+        <input type="text" id="channel-name" placeholder="ví-dụ-kênh-tán-gẩu" required />
+      </div>
+      <div class="form-group">
+        <label for="channel-type">Loại Kênh</label>
+        <select id="channel-type" class="form-select">
+          <option value="text">🔤 Tán Gẩu (Text)</option>
+          <option value="announcement">📢 Thông Báo</option>
+          <option value="voice">🔊 Kênh Thoại</option>
+        </select>
+      </div>
+      <div id="channel-modal-delete-wrap" style="display:none;border-top:1px solid rgba(255,255,255,.07);margin-top:16px;padding-top:16px;">
+        <button type="button" id="btn-delete-channel" class="btn-auth-submit" style="background:rgba(224,92,92,.2);border:1px solid rgba(224,92,92,.4);color:#e05c5c;">🗑️ Xóa Kênh Này</button>
+      </div>
+      <button type="submit" class="btn-auth-submit" id="channel-form-submit">Tạo Kênh ✨</button>
+    </form>
+  </div>
+</div>
+<!-- Bảng Ngọc Đệ Tử (Profile Context Menu / Modal) -->
+<div id="modal-user-profile" class="modal-overlay hidden" role="dialog" aria-modal="true">
+  <div class="modal-box profile-modal-box">
+    <button class="modal-close" id="close-user-profile" aria-label="Đóng">✕</button>
+    <div class="profile-header-glow"></div>
+    <div class="profile-card-header">
+      <div class="profile-avatar-large-wrap">
+        <img id="user-profile-avatar" src="" alt="Chân Dung Đạo Hữu" class="profile-avatar-large" />
+        <div class="profile-status-dot online"></div>
+      </div>
+      <h2 class="profile-name-large" id="user-profile-name">Đạo Hữu Vô Danh</h2>
+      <p class="profile-title-rank" id="user-profile-realm">Cảnh Giới: Phàm Nhân</p>
+    </div>
+    <div class="profile-card-body">
+      <div class="profile-info-row" style="display: none;">
+        <span class="info-label">Đạo Danh:</span>
+        <span class="info-val" id="user-profile-email">unknown@tiengioi.vn</span>
+      </div>
+      <div class="profile-info-row">
+        <span class="info-label">Giới Tính:</span>
+        <span class="info-val" id="user-profile-gender">Khó Nói</span>
+      </div>
+      <div class="profile-info-row">
+        <span class="info-label">Linh Lực:</span>
+        <div class="profile-exp-bar-wrap">
+          <div class="profile-exp-bar-fill" id="user-profile-exp-bar" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="profile-exp-text" id="user-profile-exp-text">0 / 0 Linh Khí</div>
+    </div>
+    <div class="profile-card-footer">
+      <button class="btn-profile-action dm" id="btn-profile-dm">💬 Nhắn Tin Riêng</button>
+      <button class="btn-profile-action friend" id="btn-profile-friend">🤝 Kết Bạn</button>
+      <button class="btn-profile-action block" id="btn-profile-block">🚫 Chặn Đồng Đạo</button>
+    </div>
+  </div>
+</div>
+
+<div id="sticker-picker" class="sticker-picker hidden">
+  <div class="sticker-picker-header">🎴 Pháp Bảo Sticker</div>
+  <div class="sticker-grid" id="sticker-grid"></div>
+</div>
+
+<!-- Voice Call Modals (Ringing Flow) -->
+<!-- 1. Outgoing Call Modal (Phía người gọi) -->
+<div id="modal-outgoing-call" class="modal-overlay hidden" role="dialog" aria-modal="true" style="z-index: 2000;">
+  <div class="modal-box" style="text-align:center; background:var(--bg-panel); border:1px solid var(--c-gold); box-shadow:0 0 30px rgba(220,186,104,0.15);">
+    <div class="profile-avatar-large-wrap" style="margin:20px auto;">
+      <img id="outgoing-call-avatar" src="" alt="Avatar" class="profile-avatar-large" style="animation: pulse-ring 1.5s infinite; box-shadow:0 0 15px var(--c-gold);" />
+    </div>
+    <h2 id="outgoing-call-name" style="font-family:'Noto Serif SC', serif; color:var(--c-gold); margin-bottom:8px;">Đạo Hữu</h2>
+    <p id="outgoing-call-status" style="color:var(--t-muted); font-size:14px; margin-bottom:24px;">Đang truyền âm thanh...</p>
+    <button id="btn-cancel-call" class="btn-auth-submit" style="background:rgba(224,92,92,0.15); border-color:rgba(224,92,92,0.4); color:#e05c5c; width:auto; padding:8px 32px;">Kết Thúc Ngay</button>
+  </div>
+</div>
+
+<!-- 2. Incoming Call Modal (Phía người nghe) -->
+<div id="modal-incoming-call" class="modal-overlay hidden" role="dialog" aria-modal="true" style="z-index: 2000;">
+  <div class="modal-box" style="text-align:center; background:var(--bg-panel); border:1px solid #2dd4bf; box-shadow:0 0 30px rgba(45,212,191,0.15);">
+    <div class="profile-avatar-large-wrap" style="margin:20px auto;">
+      <img id="incoming-call-avatar" src="" alt="Avatar" class="profile-avatar-large" style="animation: pulse-ring 1s infinite; box-shadow:0 0 15px #2dd4bf;" />
+    </div>
+    <h2 id="incoming-call-name" style="font-family:'Noto Serif SC', serif; color:#2dd4bf; margin-bottom:8px;">Đạo Hữu</h2>
+    <p style="color:var(--t-muted); font-size:14px; margin-bottom:24px;">Đang muốn truyền linh âm đàm đạo cùng bạn...</p>
+    <div style="display:flex; justify-content:center; gap:16px;">
+      <button id="btn-reject-call" class="btn-auth-submit" style="background:rgba(224,92,92,0.15); border-color:rgba(224,92,92,0.4); color:#e05c5c; flex:1;">Từ Chối</button>
+      <button id="btn-accept-call" class="btn-auth-submit" style="background:rgba(45,212,191,0.15); border-color:rgba(45,212,191,0.4); color:#2dd4bf; flex:1;">Tiếp Thụ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+<!-- Socket.io client -->
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+<!-- JS Entry Point (ES Module) -->
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

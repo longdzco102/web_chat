@@ -1,0 +1,23 @@
+/* ─── 4-Column App Layout ─── */
+.app-root {
+  display: grid;
+  grid-template-columns: var(--w-sidebar) var(--w-panel) 1fr var(--w-panel);
+  grid-template-rows: 100vh;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ─── Responsive Breakpoints ─── */
+@media (max-width: 1100px) {
+  .app-root { grid-template-columns: var(--w-sidebar) var(--w-panel) 1fr 0; }
+  #member-panel { display: none; }
+}
+@media (max-width: 800px) {
+  .app-root { grid-template-columns: 0 var(--w-panel) 1fr 0; }
+  #sidebar { display: none; }
+}
+@media (max-width: 600px) {
+  .app-root { grid-template-columns: 0 0 1fr 0; }
+  #channel-panel { display: none; }
+  .blog-grid { grid-template-columns: 1fr; padding: 12px; }
+}

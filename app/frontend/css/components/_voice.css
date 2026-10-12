@@ -1,0 +1,337 @@
+/* ────────────────────────────────────────────────────────
+   Linh Âm Đại Điện – Premium WebRTC Voice Chat Styles
+   ──────────────────────────────────────────────────────── */
+
+.voice-active-room {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+  background: radial-gradient(circle at center, #1b2028 0%, #111418 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Beautiful magical background particles or circles */
+.voice-active-room::before {
+  content: '';
+  position: absolute;
+  top: -10%; left: -10%; width: 120%; height: 120%;
+  background: radial-gradient(circle at 20% 30%, rgba(45, 212, 191, 0.05) 0%, transparent 40%),
+              radial-gradient(circle at 80% 70%, rgba(232, 197, 106, 0.05) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Header with current status */
+.voice-room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  z-index: 2;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 16px;
+}
+
+.voice-room-info h2 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 22px;
+  color: var(--t-white);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.voice-room-status-badge {
+  background: rgba(45, 212, 191, 0.1);
+  border: 1px solid rgba(45, 212, 191, 0.3);
+  color: var(--c-jade);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: var(--r-full);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.15);
+}
+
+.voice-room-status-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background-color: var(--c-jade);
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulse-ring 1.8s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(45, 212, 191, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(45, 212, 191, 0); }
+}
+
+/* Lưới bệ sen (Lotus seats mesh grid) */
+.voice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  flex: 1;
+  align-content: center;
+  justify-content: center;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  z-index: 2;
+}
+
+/* Cultivator Lotus Seat Card */
+.voice-member-card {
+  background: rgba(43, 45, 49, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--r-xl);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  transition: var(--ease-spring);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.voice-member-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: var(--shadow-lg);
+  background: rgba(43, 45, 49, 0.55);
+}
+
+/* Animated glow when speaking */
+.voice-member-card.speaking {
+  border-color: var(--c-jade);
+  box-shadow: 0 0 20px rgba(45, 212, 191, 0.3), inset 0 0 10px rgba(45, 212, 191, 0.05);
+}
+
+.voice-member-card.speaking::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: var(--r-xl);
+  border: 1.5px solid var(--c-jade);
+  animation: card-glow-pulse 1.5s infinite;
+  pointer-events: none;
+}
+
+@keyframes card-glow-pulse {
+  0% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.3; }
+}
+
+/* Avatar styling with Lotus Seat glow */
+.voice-avatar-wrap {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  position: relative;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1e1f22;
+}
+
+.voice-avatar-wrap::before {
+  content: '';
+  position: absolute;
+  top: -8px; left: -8px; right: -8px; bottom: -8px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(255, 255, 255, 0.07);
+  transition: var(--ease);
+}
+
+.voice-member-card.speaking .voice-avatar-wrap::before {
+  border: 1.5px solid var(--c-jade);
+  animation: spin-dashed 12s linear infinite;
+}
+
+@keyframes spin-dashed {
+  100% { transform: rotate(360deg); }
+}
+
+.voice-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transition: var(--ease);
+}
+
+.voice-member-card.speaking .voice-avatar {
+  border-color: var(--c-jade);
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(45, 212, 191, 0.5);
+}
+
+/* Voice status badges inside card */
+.voice-mic-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--c-sidebar);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  transition: var(--ease);
+}
+
+.voice-mic-badge.muted {
+  background: var(--c-crimson);
+  color: #fff;
+  border-color: var(--c-crimson);
+}
+
+.voice-mic-badge.active {
+  background: var(--c-jade);
+  color: #fff;
+  border-color: var(--c-jade);
+}
+
+/* Member information */
+.voice-member-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--t-white);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.voice-member-realm {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: var(--r-xs);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Controls Bar styled with glassmorphism */
+.voice-controls-bar {
+  margin-top: 32px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.voice-ctrl-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(43, 45, 49, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--t-primary);
+  transition: var(--ease-spring);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.voice-ctrl-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+}
+
+.voice-ctrl-btn.active {
+  background: var(--c-jade);
+  color: #fff;
+  border-color: var(--c-jade);
+}
+
+.voice-ctrl-btn.active:hover {
+  background: var(--c-jade-dim);
+}
+
+.voice-ctrl-btn.mute-btn.muted {
+  background: var(--c-crimson);
+  color: #fff;
+  border-color: var(--c-crimson);
+}
+
+.voice-ctrl-btn.leave-btn {
+  background: rgba(224, 92, 92, 0.15);
+  color: var(--c-crimson);
+  border: 1px solid rgba(224, 92, 92, 0.4);
+}
+
+.voice-ctrl-btn.leave-btn:hover {
+  background: var(--c-crimson);
+  color: #fff;
+  border-color: var(--c-crimson);
+}
+
+/* Speaking waves overlay inside card background */
+.voice-wave-bg {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 32px;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(45, 212, 191, 0.1), transparent);
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  padding: 0 16px;
+  overflow: hidden;
+}
+
+.voice-member-card.speaking .voice-wave-bg {
+  opacity: 1;
+}
+
+.voice-wave-bar {
+  width: 3px;
+  height: 4px;
+  background: var(--c-jade);
+  border-radius: var(--r-full);
+  animation: wave-bounce 0.8s ease-in-out infinite alternate;
+}
+
+.voice-wave-bar:nth-child(2) { animation-delay: 0.15s; }
+.voice-wave-bar:nth-child(3) { animation-delay: 0.3s; }
+.voice-wave-bar:nth-child(4) { animation-delay: 0.1s; }
+.voice-wave-bar:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes wave-bounce {
+  0% { height: 4px; }
+  100% { height: 20px; }
+}

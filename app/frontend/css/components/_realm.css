@@ -1,0 +1,127 @@
+/* ─── Realm Name Colors (theo cảnh giới) ─── */
+/* Tag badge next to name */
+.msg-realm-tag              { font-size:10px; font-weight:700; padding:1px 6px; border-radius:3px; border:1px solid; }
+.msg-realm-tag.realm-luyen-khi  { background:rgba(156,163,175,.15); color:#9CA3AF; border-color:rgba(156,163,175,.3); }
+.msg-realm-tag.realm-truc-co    { background:rgba(110,231,183,.15); color:#6EE7B7; border-color:rgba(110,231,183,.3); }
+.msg-realm-tag.realm-kim-dan    { background:rgba(252,211,77,.15);  color:#FCD34D; border-color:rgba(252,211,77,.3);  }
+.msg-realm-tag.realm-nguyen-anh { background:rgba(167,139,250,.15); color:#A78BFA; border-color:rgba(167,139,250,.3); }
+.msg-realm-tag.realm-hoa-than   { background:rgba(248,113,113,.15); color:#F87171; border-color:rgba(248,113,113,.3); }
+.msg-realm-tag.realm-luyen-hu   { background:rgba(96,165,250,.15);  color:#60A5FA; border-color:rgba(96,165,250,.3);  }
+.msg-realm-tag.realm-hop-the    { background:rgba(251,146,60,.15);  color:#FB923C; border-color:rgba(251,146,60,.3);  }
+.msg-realm-tag.realm-dai-thua   { background:rgba(232,121,249,.15); color:#E879F9; border-color:rgba(232,121,249,.3); }
+.msg-realm-tag.realm-do-kiep    { background:rgba(251,191,36,.2);   color:#FBBF24; border-color:rgba(251,191,36,.4);  box-shadow:0 0 8px rgba(251,191,36,.3); }
+
+/* Name color follow realm */
+.msg-name                       { font-size:14px; font-weight:700; cursor:pointer; }
+.msg-name:hover                 { text-decoration:underline; }
+.msg-name.realm-name-luyen-khi  { color:#9CA3AF; }
+.msg-name.realm-name-truc-co    { color:#6EE7B7; }
+.msg-name.realm-name-kim-dan    { color:#FCD34D; }
+.msg-name.realm-name-nguyen-anh { color:#A78BFA; }
+.msg-name.realm-name-hoa-than   { color:#F87171; }
+.msg-name.realm-name-luyen-hu   { color:#60A5FA; }
+.msg-name.realm-name-hop-the    { color:#FB923C; }
+.msg-name.realm-name-dai-thua   { color:#E879F9; }
+.msg-name.realm-name-do-kiep    { color:#FBBF24; text-shadow:0 0 10px rgba(251,191,36,.6); }
+
+/* Role badges */
+.msg-role-badge             { font-size:10px; font-weight:700; padding:1px 7px; border-radius:3px; }
+.msg-role-badge.role-tong-chu   { background:rgba(248,113,113,.2); color:#F87171; border:1px solid rgba(248,113,113,.4); }
+.msg-role-badge.role-truong-lao { background:rgba(167,139,250,.2); color:#A78BFA; border:1px solid rgba(167,139,250,.4); }
+
+/* ─── Sticker Message ─── */
+.sticker-msg {
+  width: 120px; height: 120px; object-fit: contain;
+  display: block; border-radius: var(--r-lg);
+  cursor: pointer; transition: transform .15s;
+  margin: 4px 0;
+}
+.sticker-msg:hover { transform: scale(1.08); }
+.msg-row.is-sticker .msg-content { background: none; }
+
+/* ─── Sticker Picker ─── */
+.sticker-picker {
+  position: fixed; bottom: 80px; right: 60px;
+  width: 320px; background: #232428;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--r-xl); overflow: hidden;
+  z-index: 500; box-shadow: var(--shadow-lg);
+}
+.sticker-picker-header {
+  padding: 10px 14px; font-size: 12px; font-weight: 700;
+  color: var(--t-secondary); border-bottom: 1px solid rgba(255,255,255,.06);
+  background: rgba(0,0,0,.2);
+}
+.sticker-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 4px; padding: 8px; max-height: 260px; overflow-y: auto;
+}
+.sticker-thumb {
+  width: 68px; height: 68px; border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .12s;
+  overflow: hidden;
+}
+.sticker-thumb:hover { background: var(--c-hover); transform: scale(1.06); }
+.sticker-thumb img   { width: 56px; height: 56px; object-fit: contain; }
+
+/* ─── Breakthrough Button ─── */
+.breakthrough-btn {
+  font-size: 11px; font-weight: 700; padding: 5px 10px;
+  border-radius: var(--r-full); color: var(--t-muted);
+  border: 1px solid rgba(255,255,255,.1);
+  transition: all .2s; white-space: nowrap; width: auto;
+}
+.breakthrough-btn.ready {
+  color: #FBBF24;
+  border-color: rgba(251,191,36,.6);
+  background: rgba(251,191,36,.15);
+  box-shadow: 0 0 12px rgba(251,191,36,.3);
+  animation: bt-pulse 1.5s ease-in-out infinite;
+}
+@keyframes bt-pulse {
+  0%,100% { box-shadow: 0 0 8px rgba(251,191,36,.3); }
+  50%      { box-shadow: 0 0 20px rgba(251,191,36,.7); }
+}
+.breakthrough-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ─── Breakthrough Visual Overlay ─── */
+.breakthrough-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  animation: bt-overlay-in .3s ease, bt-overlay-out .5s ease 2s forwards;
+  pointer-events: none;
+}
+.breakthrough-success {
+  background: radial-gradient(ellipse at center, rgba(251,191,36,.3), transparent 70%);
+}
+.breakthrough-fail {
+  background: radial-gradient(ellipse at center, rgba(248,113,113,.3), transparent 70%);
+}
+.bt-content {
+  text-align: center; font-size: 28px; font-weight: 900;
+  font-family: 'Noto Serif SC', serif; line-height: 1.4;
+  text-shadow: 0 0 30px currentColor;
+  animation: bt-content-pop .4s cubic-bezier(.34,1.56,.64,1);
+}
+.breakthrough-success .bt-content { color: #FBBF24; }
+.breakthrough-fail    .bt-content { color: #F87171; }
+@keyframes bt-overlay-in  { from{opacity:0} to{opacity:1} }
+@keyframes bt-overlay-out { from{opacity:1} to{opacity:0} }
+@keyframes bt-content-pop { from{transform:scale(.5);opacity:0} to{transform:scale(1);opacity:1} }
+
+/* ─── System / World Notice ─── */
+.msg-system {
+  text-align: center; font-size: 12px; color: var(--c-gold);
+  padding: 6px 16px; margin: 8px 0;
+  background: rgba(232,197,106,.08);
+  border: 1px solid rgba(232,197,106,.2);
+  border-radius: var(--r-full);
+  font-style: italic;
+}
+
+/* ─── EXP bar full glow ─── */
+.exp-bar-fill.full {
+  background: linear-gradient(90deg, #FBBF24, #F59E0B);
+  box-shadow: 0 0 8px rgba(251,191,36,.6);
+}
