@@ -1,0 +1,80 @@
+/* ─── Sidebar (72px) ─── */
+.sidebar {
+  background: var(--c-sidebar);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 12px 0; gap: 8px;
+  overflow: hidden; position: relative; z-index: 10;
+}
+
+/* Logo */
+.sidebar-logo {
+  width: 48px; height: 48px;
+  border-radius: var(--r-lg);
+  background: linear-gradient(135deg, #2a2060, #4a1070);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; position: relative; flex-shrink: 0;
+  transition: border-radius .3s, background .3s, transform .2s;
+}
+.sidebar-logo:hover {
+  border-radius: var(--r-full);
+  background: linear-gradient(135deg, var(--c-violet-dim), var(--c-jade-dim));
+  transform: scale(1.05);
+}
+.sidebar-logo .logo-symbol {
+  font-size: 24px;
+  filter: drop-shadow(0 0 8px var(--c-jade));
+  animation: spin-slow 12s linear infinite;
+}
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+
+/* Tooltip */
+.sidebar-tooltip, .logo-tooltip {
+  position: absolute; left: calc(100% + 16px); top: 50%; transform: translateY(-50%);
+  background: #111214; color: var(--t-white);
+  font-size: 13px; font-weight: 600;
+  padding: 6px 12px; border-radius: var(--r-md);
+  white-space: nowrap; pointer-events: none;
+  opacity: 0; transition: opacity .15s;
+  box-shadow: var(--shadow-lg); z-index: 99;
+}
+.sidebar-tooltip::before, .logo-tooltip::before {
+  content: ''; position: absolute;
+  right: 100%; top: 50%; transform: translateY(-50%);
+  border: 6px solid transparent; border-right-color: #111214;
+}
+.sidebar-logo:hover .logo-tooltip,
+.sidebar-action-btn:hover .sidebar-tooltip,
+.sect-icon:hover .sidebar-tooltip { opacity: 1; }
+
+.sidebar-divider {
+  width: 32px; height: 2px;
+  background: var(--c-panel); border-radius: 1px; flex-shrink: 0;
+}
+
+/* Sect icons */
+.sect-list { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; }
+.sect-icon {
+  width: 48px; height: 48px; border-radius: var(--r-xl);
+  background: var(--c-panel);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; cursor: pointer; position: relative;
+  transition: border-radius .3s, transform .2s;
+}
+.sect-icon:hover, .sect-icon.active { border-radius: var(--r-lg); transform: scale(1.05); }
+.sect-icon.active::before {
+  content: ''; position: absolute; left: -4px; top: 50%; transform: translateY(-50%);
+  width: 4px; height: 36px; background: var(--c-jade); border-radius: 0 3px 3px 0;
+}
+
+/* Action Buttons */
+.sidebar-action-btn {
+  width: 48px; height: 48px; border-radius: var(--r-full);
+  background: var(--c-panel); color: var(--c-jade);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; position: relative; flex-shrink: 0;
+  transition: border-radius .3s, background .3s, transform .2s;
+}
+.sidebar-action-btn:hover {
+  border-radius: var(--r-lg); background: var(--c-jade); color: #fff; transform: scale(1.05);
+}
+.action-icon { font-size: 22px; font-weight: 700; line-height: 1; }

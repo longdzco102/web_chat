@@ -1,0 +1,48 @@
+/* ─── Member Panel (240px) ─── */
+.member-panel {
+  background: var(--c-panel);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.member-search-wrap { padding: 12px 8px 8px; flex-shrink: 0; }
+.member-search {
+  width: 100%; background: var(--c-main); border: none; outline: none;
+  border-radius: var(--r-sm); padding: 6px 10px;
+  font-size: 13px; color: var(--t-primary);
+}
+.member-search::placeholder { color: var(--t-muted); }
+
+.member-list { flex: 1; overflow-y: auto; padding: 0 8px 12px; }
+.member-group-label {
+  font-size: 11px; font-weight: 700; color: var(--t-muted);
+  text-transform: uppercase; letter-spacing: .8px; padding: 16px 8px 4px;
+}
+.member-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 8px; border-radius: var(--r-md);
+  cursor: pointer; transition: background .12s;
+}
+.member-item:hover { background: var(--c-hover); }
+.member-item.offline .member-name { color: var(--t-muted); }
+.member-avatar-wrap { position: relative; flex-shrink: 0; }
+.member-avatar {
+  width: 32px; height: 32px; border-radius: var(--r-full);
+  background: linear-gradient(135deg, var(--c-violet-dim), var(--c-jade-dim));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: #fff; overflow: hidden;
+}
+.member-avatar-img {
+  width: 100%; height: 100%; border-radius: var(--r-full);
+  object-fit: cover; display: block;
+}
+.member-status {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--c-panel);
+  position: absolute; bottom: 0; right: 0;
+}
+.member-status.online  { background: #23a55a; }
+.member-status.away    { background: #f0b132; }
+.member-status.busy    { background: var(--c-crimson); }
+.member-status.offline { background: #6D6F78; }
+.member-info { flex: 1; min-width: 0; }
+.member-name { font-size: 13px; font-weight: 600; color: var(--t-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.member-realm-badge { font-size: 9px; font-weight: 700; color: var(--c-gold); }

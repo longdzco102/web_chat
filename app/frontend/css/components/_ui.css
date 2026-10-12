@@ -1,0 +1,35 @@
+/* ─── Emoji Picker ─── */
+.emoji-picker {
+  position: fixed; bottom: 80px; right: 260px;
+  width: 280px; background: #232428;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--r-xl); padding: 12px;
+  z-index: 500; box-shadow: var(--shadow-lg);
+}
+.emoji-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+.emoji-btn {
+  width: 36px; height: 36px; border-radius: var(--r-sm); font-size: 20px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .1s;
+}
+.emoji-btn:hover { background: var(--c-hover); }
+
+/* ─── Toast ─── */
+.toast-container {
+  position: fixed; bottom: 24px; right: 24px;
+  display: flex; flex-direction: column; gap: 8px; z-index: 2000;
+}
+.toast {
+  background: #232428; border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--r-md); padding: 12px 16px;
+  font-size: 14px; color: var(--t-primary);
+  box-shadow: var(--shadow-lg); max-width: 300px;
+  display: flex; align-items: center; gap: 10px;
+  animation: toast-slide-in .25s ease;
+}
+.toast.success { border-left: 3px solid #23a55a; }
+.toast.error   { border-left: 3px solid var(--c-crimson); }
+.toast.info    { border-left: 3px solid var(--c-jade); }
+@keyframes toast-slide-in  { from{opacity:0;transform:translateX(40px)} to{opacity:1;transform:translateX(0)} }
+@keyframes toast-slide-out { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(40px)} }
+.toast.out { animation: toast-slide-out .25s ease forwards; }

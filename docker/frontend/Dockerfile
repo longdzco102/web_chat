@@ -1,26 +1,15 @@
 # ============================================
-# Production Nginx for Frontend SPA
-# ============================================
-FROM node:20-alpine AS builder
-WORKDIR /app
-
-# Copy and build frontend
-COPY frontend/ ./
-RUN npm ci && \
-    npm run build
-
-# ============================================
-# Production Nginx Server
+# Production Nginx for Frontend SPA (Static)
 # ============================================
 FROM nginx:1.25-alpine AS runner
 
 # Copy custom nginx config
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
-# Copy built assets from builder
-COPY --from=builder /app/dist /usr/share/nginx/html
+# Copy static frontend files
+COPY app/frontend/ /usr/share/nginx/html/
 
-# Create non-root user
+# Create non-root user setup
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /var/log/nginx && \
@@ -32,7 +21,7 @@ EXPOSE 80
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost/ || exit 1
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]

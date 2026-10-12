@@ -1,0 +1,42 @@
+/* ─── Main Content Column ─── */
+.main-content {
+  background: var(--c-main);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+
+/* ── Topbar ── */
+.main-topbar {
+  height: 48px; background: var(--c-main);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  box-shadow: 0 1px 0 rgba(0,0,0,.3);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px; flex-shrink: 0; z-index: 5;
+}
+.topbar-left { display: flex; align-items: center; gap: 6px; }
+.topbar-breadcrumb { font-size: 15px; color: var(--t-secondary); font-weight: 500; }
+.topbar-sep { color: var(--t-muted); font-size: 18px; }
+.topbar-page { font-size: 15px; font-weight: 700; color: var(--t-white); }
+.topbar-right { display: flex; align-items: center; gap: 4px; }
+.topbar-btn {
+  width: 36px; height: 36px; border-radius: var(--r-sm);
+  color: var(--t-secondary); font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--ease);
+}
+.topbar-btn:hover { background: var(--c-hover); color: var(--t-primary); }
+
+/* ── Views ── */
+.view { flex: 1; overflow: hidden; display: none; flex-direction: column; }
+.view.active { display: flex; }
+
+/* ── Voice placeholder ── */
+.view-voice { align-items: center; justify-content: center; }
+.voice-placeholder { text-align: center; color: var(--t-secondary); }
+.voice-icon { font-size: 64px; margin-bottom: 16px; }
+.voice-placeholder h2 { font-size: 24px; color: var(--t-white); margin-bottom: 8px; font-family: 'Noto Serif SC', serif; }
+.voice-join-btn {
+  margin-top: 20px; padding: 10px 28px; border-radius: var(--r-full);
+  background: var(--c-jade); color: #fff; font-size: 15px; font-weight: 600;
+  cursor: pointer; border: none; transition: var(--ease);
+}
+.voice-join-btn:hover { background: var(--c-jade-dim); transform: translateY(-2px); }

@@ -1,0 +1,244 @@
+/* ─── Channel Panel (240px) ─── */
+.channel-panel {
+  background: var(--c-panel);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+
+.channel-panel-header {
+  height: 48px; padding: 0 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  flex-shrink: 0; cursor: pointer;
+  transition: background .15s;
+}
+.channel-panel-header:hover { background: var(--c-hover); }
+.channel-panel-title { font-size: 15px; font-weight: 700; color: var(--t-white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.header-chevron { color: var(--t-secondary); font-size: 13px; }
+
+.channel-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+.channel-group { margin-bottom: 4px; }
+
+.channel-group-label {
+  padding: 16px 8px 4px 16px;
+  font-size: 11px; font-weight: 700; color: var(--t-secondary);
+  text-transform: uppercase; letter-spacing: .8px;
+  cursor: pointer; user-select: none;
+  display: flex; align-items: center; gap: 4px;
+}
+.channel-group-label:hover { color: var(--t-primary); }
+
+.channel-item {
+  height: 34px; padding: 0 8px 0 16px; margin: 1px 8px;
+  display: flex; align-items: center; gap: 8px;
+  border-radius: var(--r-sm); cursor: pointer; user-select: none;
+  font-size: 15px; color: var(--t-secondary);
+  transition: background .12s, color .12s;
+}
+.channel-item:hover { background: var(--c-hover); color: var(--t-primary); }
+.channel-item.active { background: var(--c-active); color: var(--t-white); }
+.channel-icon { font-size: 18px; flex-shrink: 0; }
+
+/* ─── Profile Card (pinned bottom) ─── */
+.user-profile-card {
+  background: #232428; padding: 8px; flex-shrink: 0;
+  border-top: 1px solid rgba(255,255,255,.04);
+}
+/* Guest */
+.guest-profile-section { display: flex; align-items: center; gap: 8px; padding: 4px; }
+.guest-avatar {
+  width: 36px; height: 36px; border-radius: var(--r-full);
+  background: var(--c-main); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: var(--t-muted);
+  border: 2px dashed var(--t-muted);
+}
+.guest-info { flex: 1; min-width: 0; }
+.guest-name { font-size: 13px; font-weight: 600; color: var(--t-primary); }
+.guest-hint { font-size: 11px; color: var(--t-muted); }
+.btn-login-small {
+  width: 28px; height: 28px; border-radius: var(--r-full);
+  background: var(--c-jade); color: #fff; font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--ease);
+}
+.btn-login-small:hover { background: var(--c-jade-dim); transform: scale(1.1); }
+
+/* Logged-in */
+.user-profile-section { display: flex; align-items: center; gap: 8px; padding: 4px; }
+.user-avatar-wrap { position: relative; flex-shrink: 0; }
+.user-avatar { width: 36px; height: 36px; border-radius: var(--r-full); object-fit: cover; background: var(--c-main); }
+.status-dot {
+  width: 12px; height: 12px; border-radius: var(--r-full);
+  border: 2px solid #232428; position: absolute; bottom: 0; right: 0;
+}
+.status-dot.online { background: #23a55a; }
+.status-dot.away   { background: #f0b132; }
+.status-dot.busy   { background: var(--c-crimson); }
+
+.user-info { flex: 1; min-width: 0; }
+.user-name  { font-size: 13px; font-weight: 700; color: var(--t-white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-realm { font-size: 10px; color: var(--c-gold); font-weight: 600; margin: 1px 0; }
+.exp-bar-wrap { height: 4px; border-radius: 2px; background: rgba(255,255,255,.1); margin: 3px 0 1px; overflow: hidden; }
+.exp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--c-jade), var(--c-violet));
+  border-radius: 2px; transition: width .6s ease;
+}
+.exp-label { font-size: 9px; color: var(--t-muted); }
+.profile-actions { display: flex; flex-direction: column; gap: 2px; }
+.profile-icon-btn {
+  width: 28px; height: 28px; border-radius: var(--r-sm);
+  color: var(--t-secondary); font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--ease);
+}
+.profile-icon-btn:hover { background: var(--c-hover); color: var(--t-primary); }
+
+/* ─── Sect Toolbar (owner actions inside channel panel) ─── */
+.sect-toolbar {
+  display: flex; gap: 6px; padding: 8px 12px 4px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.sect-toolbar-btn {
+  flex: 1; padding: 5px 8px; border-radius: var(--r-sm);
+  font-size: 11px; font-weight: 600; cursor: pointer;
+  background: var(--c-hover); color: var(--t-secondary);
+  border: 1px solid rgba(255,255,255,.06);
+  transition: var(--ease);
+}
+.sect-toolbar-btn:hover { background: var(--c-active); color: var(--t-primary); }
+
+/* ─── Sidebar: owner crown ─── */
+.sect-icon.sect-owner { box-shadow: 0 0 0 2px var(--c-gold); }
+
+/* ─── Channel item: edit icon & name ─── */
+.channel-name-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.channel-edit-icon {
+  opacity: 0; font-size: 12px; padding: 2px 5px; border-radius: 4px;
+  background: transparent; color: var(--t-muted); cursor: pointer;
+  border: none; flex-shrink: 0; transition: opacity .15s, background .15s;
+}
+.channel-item:hover .channel-edit-icon { opacity: 1; }
+.channel-edit-icon:hover { background: var(--c-active); color: var(--t-white); }
+
+/* ─── Channel management bar (+ Tạo Kênh) ─── */
+.channel-mgmt-bar {
+  padding: 8px 10px;
+  border-top: 1px solid rgba(255,255,255,.04);
+}
+.channel-add-btn {
+  width: 100%; padding: 7px 10px; border-radius: var(--r-sm);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  background: rgba(45,212,191,.08); color: var(--c-jade);
+  border: 1px dashed rgba(45,212,191,.3);
+  transition: var(--ease); text-align: center;
+}
+.channel-add-btn:hover {
+  background: rgba(45,212,191,.18);
+  border-color: var(--c-jade);
+  color: #fff;
+}
+
+/* ─── DM List Styles ─── */
+.dm-item {
+  height: 44px;
+  padding: 0 12px;
+  margin: 2px 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.dm-item:hover {
+  background: var(--c-hover);
+}
+
+.dm-item.active {
+  background: var(--c-active);
+}
+
+.dm-avatar-wrap {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.dm-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--c-main);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dm-avatar.text-avatar {
+  background: linear-gradient(135deg, var(--c-violet-dim), var(--c-jade-dim));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  color: #fff;
+}
+
+.dm-status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1.5px solid var(--c-panel);
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  background: #747f8d; /* Mặc định offline */
+}
+
+.dm-status-dot.online {
+  background: #23a55a;
+}
+
+.dm-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dm-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--t-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s;
+}
+
+.dm-item:hover .dm-name,
+.dm-item.active .dm-name {
+  color: var(--t-white);
+}
+
+.dm-realm {
+  font-size: 10px;
+  color: var(--c-gold);
+  font-weight: 500;
+  margin-top: 1px;
+}
+
+.dm-unread-badge {
+  background: #ef4444;
+  color: #fff;
+  border-radius: 10px;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+  flex-shrink: 0;
+}

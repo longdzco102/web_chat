@@ -1,0 +1,48 @@
+/* ─────────────────────────────────────────────
+   DESIGN TOKENS – Xianxia / Discord dark theme
+   ───────────────────────────────────────────── */
+:root {
+  /* ── Layout colours (Discord-spec) ── */
+  --c-sidebar:   #1E1F22;
+  --c-panel:     #2B2D31;
+  --c-main:      #313338;
+  --c-input-bg:  #383A40;
+  --c-hover:     rgba(255,255,255,.06);
+  --c-active:    rgba(255,255,255,.12);
+
+  /* ── Xianxia accent palette ── */
+  --c-gold:        #E8C56A;
+  --c-gold-dim:    #A8893A;
+  --c-jade:        #2DD4BF;
+  --c-jade-dim:    #1A8A7B;
+  --c-crimson:     #E05C5C;
+  --c-violet:      #9B59FF;
+  --c-violet-dim:  #6A3DB8;
+
+  /* ── Typography ── */
+  --t-white:     #FFFFFF;
+  --t-primary:   #DBDEE1;
+  --t-secondary: #949BA4;
+  --t-muted:     #6D6F78;
+
+  /* ── Radii ── */
+  --r-xs:   4px;
+  --r-sm:   6px;
+  --r-md:   8px;
+  --r-lg:   12px;
+  --r-xl:   16px;
+  --r-full: 9999px;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 2px 8px  rgba(0,0,0,.35);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.45);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.55);
+
+  /* ── Transitions ── */
+  --ease: all .18s ease;
+  --ease-spring: all .25s cubic-bezier(.34,1.56,.64,1);
+
+  /* ── Column widths ── */
+  --w-sidebar: 72px;
+  --w-panel:   240px;
+}

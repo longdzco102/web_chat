@@ -1,0 +1,25 @@
+/* ─── Reset & Base Styles ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', 'Noto Serif SC', system-ui, sans-serif;
+  background: var(--c-main);
+  color: var(--t-primary);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+button  { cursor: pointer; border: none; background: none; font-family: inherit; }
+a       { color: var(--c-jade); text-decoration: none; }
+a:hover { text-decoration: underline; }
+input, textarea { font-family: inherit; }
+img { display: block; }
+
+.hidden { display: none !important; }
+
+/* ─── Custom Scrollbar ─── */
+::-webkit-scrollbar       { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.2); }

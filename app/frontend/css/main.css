@@ -1,0 +1,26 @@
+/* ═══════════════════════════════════════════════════════
+   main.css – Entry point: imports all partials
+   Load order matters: variables → reset → layout → components
+   ═══════════════════════════════════════════════════════ */
+
+/* ── 1. Base ── */
+@import url('base/_variables.css');
+@import url('base/_reset.css');
+
+/* ── 2. Layouts ── */
+@import url('layouts/_app.css');
+
+/* ── 3. Components ── */
+@import url('components/_sidebar.css');
+@import url('components/_channel-panel.css');
+@import url('components/_main-content.css');
+@import url('components/_blog.css');
+@import url('components/_chat.css');
+@import url('components/_member-panel.css');
+@import url('components/_modals.css');
+@import url('components/_ui.css');
+@import url('components/_realm.css');
+@import url('components/_voice.css');
+
+/* ── 4. Google Fonts (loaded here so index.html stays clean) ── */
+/* Inter + Noto Serif SC already linked in <head> */
