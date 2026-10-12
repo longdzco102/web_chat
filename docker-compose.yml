@@ -1,0 +1,138 @@
+# ============================================
+# Docker Compose - Full Stack Web Chat
+# ============================================
+# Usage:
+#   docker-compose up -d          # Production mode
+#   docker-compose -f docker-compose.yml -f docker-compose.dev.yml up  # Development mode
+# ============================================
+
+services:
+  # -----------------------------------------
+  # MySQL Database
+  # -----------------------------------------
+  mysql:
+    image: mysql:8.0
+    container_name: webchat_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootsecretpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-webchat}
+      MYSQL_USER: ${MYSQL_USER:-webchat}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-webchatpassword}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootsecretpassword}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - webchat_network
+    # Resource limits for production
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  # -----------------------------------------
+  # Backend API - Node.js + Express + Socket.io
+  # -----------------------------------------
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    container_name: webchat_backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 3000
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: ${MYSQL_USER:-webchat}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-webchatpassword}
+      DB_NAME: ${MYSQL_DATABASE:-webchat}
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+    ports:
+      - "3000:3000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - webchat_network
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # -----------------------------------------
+  # Frontend - Nginx + Static SPA
+  # -----------------------------------------
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+    container_name: webchat_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    networks:
+      - webchat_network
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  webchat_network:
+    driver: bridge
+    name: webchat_network
+
+# ============================================
+# Volumes
+# ============================================
+volumes:
+  mysql_data:
+    name: webchat_mysql_data

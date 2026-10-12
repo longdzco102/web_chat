@@ -1,0 +1,24 @@
+# ============================================
+# Development Dockerfile for Frontend
+# ============================================
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install development dependencies
+RUN apk add --no-cache git
+
+# Copy package files
+COPY frontend/package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy source code
+COPY frontend/ ./
+
+# Expose port
+EXPOSE 3001
+
+# Start dev server with hot reload
+CMD ["npm", "run", "dev"]

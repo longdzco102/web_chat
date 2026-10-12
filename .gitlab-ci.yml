@@ -1,0 +1,243 @@
+# ============================================
+# GitLab CI/CD Pipeline
+# ============================================
+# Full CI/CD for:
+# - Docker image building
+# - Docker Compose testing
+# - Terraform deployment
+# ============================================
+
+stages:
+  - lint
+  - test
+  - build
+  - deploy
+
+# ============================================
+# Variables
+# ============================================
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  TF_VERSION: "1.5.0"
+  REGISTRY_IMAGE: $CI_REGISTRY_IMAGE
+
+# ============================================
+# Docker Configuration
+# ============================================
+docker-base:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - echo "Docker login successful"
+
+# ============================================
+# Linting Stage
+# ============================================
+terraform-fmt:
+  stage: lint
+  image:
+    name: hashicorp/terraform:$TF_VERSION
+    entrypoint: [""]
+  before_script:
+    - cd terraform
+  script:
+    - terraform fmt -check -recursive
+  only:
+    changes:
+      - terraform/**/*
+      - .gitlab-ci.yml
+
+dockerfile-lint:
+  stage: lint
+  image: hadolint/hadolint:latest
+  script:
+    - hadolint docker/backend/Dockerfile docker/frontend/Dockerfile
+  only:
+    changes:
+      - docker/**/*
+
+yaml-lint:
+  stage: lint
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache ruby ruby-bundler
+    - gem install yamllint
+  script:
+    - yamllint docker-compose.yml docker-compose.dev.yml .gitlab-ci.yml
+  only:
+    changes:
+      - docker-compose*.yml
+      - .gitlab-ci.yml
+
+# ============================================
+# Test Stage
+# ============================================
+docker-compose-test:
+  stage: test
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker network create test_network || true
+    - docker-compose -f docker-compose.yml up -d mysql
+    - echo "Waiting for MySQL to be ready..."
+    - sleep 30
+    - docker-compose -f docker-compose.yml run --rm backend sh -c "npm ci && npm test"
+  after_script:
+    - docker-compose -f docker-compose.yml down -v
+    - docker network rm test_network || true
+  only:
+    changes:
+      - backend/**/*
+      - docker/**
+
+docker-compose-smoke-test:
+  stage: test
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker-compose -f docker-compose.yml up -d
+    - echo "Waiting for services to start..."
+    - sleep 20
+    - curl -f http://localhost:80/health || exit 1
+    - curl -f http://localhost:3000/api/health || exit 1
+  after_script:
+    - docker-compose -f docker-compose.yml down -v
+  only:
+    changes:
+      - docker-compose.yml
+      - docker/**
+
+# ============================================
+# Build Stage
+# ============================================
+build-backend:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHORT_SHA -f docker/backend/Dockerfile .
+    - docker tag $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/backend:latest
+    - docker push $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE/backend:latest
+  only:
+    changes:
+      - backend/**/*
+      - docker/backend/**/*
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .docker-cache
+
+build-frontend:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHORT_SHA -f docker/frontend/Dockerfile .
+    - docker tag $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/frontend:latest
+    - docker push $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE/frontend:latest
+  only:
+    changes:
+      - frontend/**/*
+      - docker/frontend/**/*
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .docker-cache
+
+# ============================================
+# Deploy Stage
+# ============================================
+deploy-staging:
+  stage: deploy
+  image: hashicorp/terraform:$TF_VERSION
+  before_script:
+    - cd terraform
+    - terraform init
+  script:
+    - terraform plan -var-file="terraform.tfvars" -out=tfplan
+    - terraform apply -auto-approve tfplan
+  environment:
+    name: staging
+    url: http://staging.example.com
+  only:
+    - develop
+  when: manual
+
+deploy-production:
+  stage: deploy
+  image: hashicorp/terraform:$TF_VERSION
+  before_script:
+    - cd terraform
+    - terraform init
+  script:
+    - terraform plan -var-file="terraform.tfvars" -out=tfplan
+    - terraform apply -auto-approve tfplan
+  environment:
+    name: production
+    url: https://your-domain.com
+  only:
+    - main
+  when: manual
+
+# ============================================
+# Docker Compose Deploy (for EC2)
+# ============================================
+deploy-ec2:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh-client curl
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
+  script:
+    - |
+      ssh -o StrictHostKeyChecking=no ubuntu@$DEPLOY_HOST << 'ENDSSH'
+        cd /app
+        git pull origin main
+        docker-compose -f docker-compose.yml pull
+        docker-compose -f docker-compose.yml up -d
+        docker system prune -f
+      ENDSSH
+  environment:
+    name: production
+    url: https://your-domain.com
+  only:
+    - main
+  when: manual
+  tags:
+    - deployment
+
+# ============================================
+# Cleanup
+# ============================================
+cleanup:
+  stage: deploy
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker image prune -f
+    - docker builder prune -f
+  when: manual
+  only:
+    - main

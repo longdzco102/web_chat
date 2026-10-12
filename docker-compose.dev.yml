@@ -1,0 +1,74 @@
+# ============================================
+# Docker Compose - Development Mode
+# ============================================
+# Usage:
+#   docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+# ============================================
+
+services:
+  # -----------------------------------------
+  # Backend Development
+  # -----------------------------------------
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile.dev
+    container_name: webchat_backend_dev
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: webchat
+      DB_PASSWORD: webchatpassword
+      DB_NAME: webchat
+      JWT_SECRET: dev-secret-jwt-key
+      JWT_EXPIRES_IN: 7d
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: npm run dev
+    healthcheck:
+      disabled: true
+
+  # -----------------------------------------
+  # Frontend Development (Live Reload)
+  # -----------------------------------------
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile.dev
+    container_name: webchat_frontend_dev
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev
+    environment:
+      - VITE_API_URL=http://localhost:3000
+      - VITE_SOCKET_URL=http://localhost:3000
+    depends_on:
+      - backend
+    healthcheck:
+      disabled: true
+
+  # -----------------------------------------
+  # phpMyAdmin (Database Management)
+  # -----------------------------------------
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: webchat_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: rootsecretpassword
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - webchat_network
